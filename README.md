@@ -1,0 +1,1 @@
+Este código en C# permite interactuar con un Árbol Binario de Búsqueda (BST) mediante un menú, realizando operaciones como inserción, eliminación, búsqueda, recorridos, inversión, conteo de nodos/hojas y determinar el nivel más profundo con hojas.
