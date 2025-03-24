@@ -1,0 +1,127 @@
+using System;
+using System.Collections.Generic;
+
+class Node {
+    public int Data;
+    public Node Left, Right;
+    public Node(int data) { Data = data; Left = Right = null; }
+}
+
+class BinaryTree {
+    private Node root;
+
+    public void Insert(int data) { root = InsertRec(root, data); }
+    private Node InsertRec(Node node, int data) {
+        if (node == null) return new Node(data);
+        if (data < node.Data) node.Left = InsertRec(node.Left, data);
+        else node.Right = InsertRec(node.Right, data);
+        return node;
+    }
+
+    public void Delete(int data) { root = DeleteRec(root, data); }
+    private Node DeleteRec(Node node, int data) {
+        if (node == null) return node;
+        if (data < node.Data) node.Left = DeleteRec(node.Left, data);
+        else if (data > node.Data) node.Right = DeleteRec(node.Right, data);
+        else {
+            if (node.Left == null) return node.Right;
+            if (node.Right == null) return node.Left;
+            node.Data = MinValue(node.Right);
+            node.Right = DeleteRec(node.Right, node.Data);
+        }
+        return node;
+    }
+    private int MinValue(Node node) {
+        int minV = node.Data;
+        while (node.Left != null) { minV = node.Left.Data; node = node.Left; }
+        return minV;
+    }
+
+    public void PreOrder() { PreOrderRec(root); Console.WriteLine(); }
+    private void PreOrderRec(Node node) {
+        if (node != null) {
+            Console.Write(node.Data + " ");
+            PreOrderRec(node.Left);
+            PreOrderRec(node.Right);
+        }
+    }
+
+    public void InOrder() { InOrderRec(root); Console.WriteLine(); }
+    private void InOrderRec(Node node) {
+        if (node != null) {
+            InOrderRec(node.Left);
+            Console.Write(node.Data + " ");
+            InOrderRec(node.Right);
+        }
+    }
+
+    public void PostOrder() { PostOrderRec(root); Console.WriteLine(); }
+    private void PostOrderRec(Node node) {
+        if (node != null) {
+            PostOrderRec(node.Left);
+            PostOrderRec(node.Right);
+            Console.Write(node.Data + " ");
+        }
+    }
+
+    public bool Search(int data) { return SearchRec(root, data); }
+    private bool SearchRec(Node node, int data) {
+        if (node == null) return false;
+        if (data == node.Data) return true;
+        return data < node.Data ? SearchRec(node.Left, data) : SearchRec(node.Right, data);
+    }
+
+    public int CountNodes() { return CountNodesRec(root); }
+    private int CountNodesRec(Node node) {
+        return node == null ? 0 : 1 + CountNodesRec(node.Left) + CountNodesRec(node.Right);
+    }
+
+    public int CountLeaves() { return CountLeavesRec(root); }
+    private int CountLeavesRec(Node node) {
+        if (node == null) return 0;
+        if (node.Left == null && node.Right == null) return 1;
+        return CountLeavesRec(node.Left) + CountLeavesRec(node.Right);
+    }
+
+    public void Mirror() { root = MirrorRec(root); }
+    private Node MirrorRec(Node node) {
+        if (node == null) return null;
+        Node left = MirrorRec(node.Left);
+        Node right = MirrorRec(node.Right);
+        node.Left = right;
+        node.Right = left;
+        return node;
+    }
+
+    public int DeepestLevel() { return DeepestLevelRec(root, 0); }
+    private int DeepestLevelRec(Node node, int level) {
+        if (node == null) return level;
+        return Math.Max(DeepestLevelRec(node.Left, level + 1), DeepestLevelRec(node.Right, level + 1));
+    }
+}
+
+class Program {
+    static void Main() {
+        BinaryTree tree = new BinaryTree();
+        while (true) {
+            Console.WriteLine("\n1. Insertar  2. Eliminar  3. Buscar  4. Pre-Orden  5. In-Orden  6. Post-Orden");
+            Console.WriteLine("7. Contar Nodos  8. Contar Hojas  9. Invertir Árbol  10. Nivel Más Profundo  11. Salir");
+            Console.Write("Elige una opción: ");
+            int option = int.Parse(Console.ReadLine());
+            switch (option) {
+                case 1: Console.Write("Número a insertar: "); tree.Insert(int.Parse(Console.ReadLine())); break;
+                case 2: Console.Write("Número a eliminar: "); tree.Delete(int.Parse(Console.ReadLine())); break;
+                case 3: Console.Write("Número a buscar: "); Console.WriteLine(tree.Search(int.Parse(Console.ReadLine())) ? "Encontrado" : "No encontrado"); break;
+                case 4: tree.PreOrder(); break;
+                case 5: tree.InOrder(); break;
+                case 6: tree.PostOrder(); break;
+                case 7: Console.WriteLine("Número de nodos: " + tree.CountNodes()); break;
+                case 8: Console.WriteLine("Número de hojas: " + tree.CountLeaves()); break;
+                case 9: tree.Mirror(); Console.WriteLine("Árbol invertido"); break;
+                case 10: Console.WriteLine("Nivel más profundo con hojas: " + tree.DeepestLevel()); break;
+                case 11: return;
+                default: Console.WriteLine("Opción inválida"); break;
+            }
+        }
+    }
+}
